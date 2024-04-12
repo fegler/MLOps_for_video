@@ -8,7 +8,7 @@ from ultralytics import YOLO
 
 import config
 
-yolo_model = YOLO(f'{config.INFER_SERVER_IP}:{config.INFER_SERVER_PORT}/yolov8l', task='detect')
+yolo_model = YOLO(f'{config.INFERENCE_URI}/yolov8l', task='detect')
 
 def yolo_inference(input_image, visualize=False, box_margin=0.0):
     pred = yolo_model.predict(input_image, classes=[0])
