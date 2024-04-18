@@ -8,8 +8,22 @@ from ultralytics import YOLO
 
 import config
 
-yolo_model = YOLO(f'{config.INFERENCE_URI}/yolov8l', task='detect')
+yolo_model = YOLO(f'http://{config.INFERENCE_URI}/yolov8l', task='detect')
 
+## video data detection
+# for visualizing detection result 
+def video_detection(video_path, visualize=False, box_margin=0.0):
+    video = cv2.VideoCapture(video_path)
+    while video.isOpened():
+        success, frame = video.read()
+        if not success:
+            break
+        result_img, _ = yolo_inference(frame, visualize=True)
+        yield result_img
+    video.release()
+
+## only inference of yolo 
+# one image inference 
 def yolo_inference(input_image, visualize=False, box_margin=0.0):
     pred = yolo_model.predict(input_image, classes=[0])
     box = pred[0].boxes.xyxy.cpu().numpy()
