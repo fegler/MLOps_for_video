@@ -14,7 +14,6 @@ app = Flask(__name__,
 def create_app():
 
     with app.app_context():
-        # CORS(app, origins=["http://localhost:3000"])
         CORS(app)
 
         from my_app.router.main_router import bp_main

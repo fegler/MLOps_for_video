@@ -8,8 +8,9 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { ChevronLeft } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 
-import axios from "axios";
+import { sendVideo } from "../util/video_send";
 
+import axios from "axios";
 import io from "socket.io-client";
 
 export default function ObjectDetBoard() {
@@ -19,25 +20,36 @@ export default function ObjectDetBoard() {
 
   const [socket, setSocket] = React.useState();
 
-  function arrayBufferToBase64(buffer) {
-    let binary = "";
-    let bytes = new Uint8Array(buffer);
-    let len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleUpload = () => {
+    console.log("upload file");
+    if (socket) {
+      // socket.emit("detection", file);
+      sendVideo(socket, file, "detection");
     }
-    return window.btoa(binary);
-  }
+  };
+
+  const visualizeResult = (data) => {
+    const canvas = document.getElementById("streaming");
+    const ctx = canvas.getContext("2d");
+    var decoder = new TextDecoder("utf-8");
+    const str_data = decoder.decode(new Uint8Array(data.stream_frame));
+    const img = new Image();
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0);
+    };
+    img.src = "data:image/jpeg;base64," + str_data;
+  };
 
   // 최초 페이지 렌더링 시 socket 연결
   React.useEffect(() => {
     // flask local pc
-    console.log("socket connect start");
-    // const socketio = io('http://192.168.155.135:5000', {
-    const socketio = io("/", {
+    const socketio = io(process.env.REACT_APP_SOCKET_URL, {
       withCredentials: true,
       extraHeaders: {
-        // 'Access-Control-Allow-Origin': 'http://localhost:3000'
         "Access-Control-Allow-Origin": "*",
       },
     });
@@ -55,37 +67,10 @@ export default function ObjectDetBoard() {
       });
 
       socket.on("stream_data", (data) => {
-        console.log("stream data socket call");
-        // console.log(data.stream_frame);
-        const canvas = document.getElementById("streaming");
-        const ctx = canvas.getContext("2d");
-        // console.log(data.stream_frame.buffer);
-        var decoder = new TextDecoder("utf-8");
-        const str_data = decoder.decode(new Uint8Array(data.stream_frame));
-        // const blob = new Blob([data.stream_frame]);
-        // const url = URL.createObjectURL(blob);
-        const img = new Image();
-        img.onload = () => {
-          console.log("image load");
-          ctx.drawImage(img, 0, 0);
-          // URL.revokeObjectURL(url);
-        };
-        // img.src = url;
-        img.src = "data:image/jpeg;base64," + str_data;
+        visualizeResult(data);
       });
     }
   }, [socket]);
-
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleUpload = () => {
-    console.log("upload file");
-    if (socket) {
-      socket.emit("detection", file);
-    }
-  };
 
   return (
     <Grid container spacing={2}>

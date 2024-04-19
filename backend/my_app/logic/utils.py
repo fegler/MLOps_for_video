@@ -10,3 +10,8 @@ def normalize_image(image, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
 
 def softmax_np(x):
     return np.exp(x) / np.sum(np.exp(x), axis=-1, keepdims=True)
+
+def video_chunks_save(chunks, video_path):
+    with open(video_path, 'wb') as f:
+        for chunk in chunks:
+            f.write(chunk)

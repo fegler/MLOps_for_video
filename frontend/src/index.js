@@ -1,9 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import Dashboard from './MainPage';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./router";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import { BrowserRouter } from "react-router-dom";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <Dashboard />
+  // <Dashboard />
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
 );
-
