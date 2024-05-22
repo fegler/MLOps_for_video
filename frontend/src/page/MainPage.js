@@ -24,9 +24,9 @@ import {
   FaObjectGroup,
 } from "react-icons/fa";
 
-import ObjectDetBoard from "./task/ObjectDetTask";
-import ActionRecogBoard from "./task/ActionRecogTask";
-import AnomalyDetBoard from "./task/AnomalyDetTask";
+import ObjectDetBoard from "../task/ObjectDetTask";
+import ActionRecogBoard from "../task/ActionRecogTask";
+import AnomalyDetBoard from "../task/AnomalyDetTask";
 
 function Copyright(props) {
   return (

@@ -1,18 +1,17 @@
-import React from "react";
+import { React, useState } from "react";
+import { Button, TextField, Stack } from "@mui/material";
+import Typography from "@mui/material/Typography";
 
-export default function DevPage() {
-  const navigateToAirflow = () => {
-    window.location.href = process.env.REACT_APP_AIRFLOW_URL;
+export default function CrawlBox() {
+  const [url, setUrl] = useState("");
+  const handleSubmit = (event) => {
+    event.preventDefault(); // 폼 제출 시 페이지 리로드 방지
+    console.log("Submitting URL:", url); // 콘솔에 URL 출력 (테스트용)
+    postData();
+
+    // 여기서 서버로 URL을 전송하는 로직을 구현하세요.
+    // 예: axios.post('/api/submit-url', { url: url })
   };
-
-  const navigateToMlflow = () => {
-    window.location.href = process.env.REACT_APP_MLFLOW_URL;
-  };
-
-  const navigateToLabelStudio = () => {
-    window.location.href = process.env.REACT_APP_LABELSTUDIO_URL;
-  };
-
   const postData = () => {
     const url =
       process.env.REACT_APP_AIRFLOW_URL +
@@ -24,8 +23,6 @@ export default function DevPage() {
     headers.append("Content-Type", "application/json");
     headers.append("Origin", process.env.REACT_APP_BACKEND_URL);
 
-    // Basic Authentication을 위한 처리
-    // 비밀번호가 있다면 "username:password" 형태로 인코딩해야합니다.
     const base64 = require("base-64");
     headers.append(
       "Authorization",
@@ -38,7 +35,7 @@ export default function DevPage() {
           "CUDA_VISIBLE_DEVICES=7 python /sources/src/ml/train_vmae.py",
       },
     });
-
+    console.log(bodyData);
     fetch(url, {
       method: "POST",
       headers: headers,
@@ -52,11 +49,19 @@ export default function DevPage() {
   };
 
   return (
-    <div>
-      <button onClick={navigateToAirflow}>Training Schedules</button>
-      <button onClick={navigateToMlflow}>Experiment Logs</button>
-      <button onClick={navigateToLabelStudio}>Label Studio Page</button>
-      <button onClick={postData}>Train script start</button>
-    </div>
+    <form onSubmit={handleSubmit} marginTop={2}>
+      <Stack spacing={2} direction="row">
+        <TextField
+          label="Enter URL"
+          variant="outlined"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          fullWidth
+        />
+        <Button type="submit" variant="contained" color="primary">
+          Submit URL
+        </Button>
+      </Stack>
+    </form>
   );
 }

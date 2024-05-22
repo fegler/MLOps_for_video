@@ -46,12 +46,16 @@ def inference_detection(video_data):
 @socketio.on('action_recognition')
 def inference_action_recognition(video_data):
     video_path = 'input.mp4'
-    with open(video_path, 'wb') as f:
-            f.write(video_data)
+    global chunks 
+    chunk = video_data['chunk']
+    isLast = video_data['isLastChunk']
+    chunks.append(chunk)
 
-    for result_imgs in video_action_recognition(video_path, visualize=True):
-        for img in result_imgs:
-            _, frame_buffer = cv2.imencode('.jpg', img)
-            frame_buffer= base64.b64encode(frame_buffer)
-            emit('stream_data', {'stream_frame': frame_buffer})
-            time.sleep(0.1)
+    if isLast:
+        video_chunks_save(chunks, video_path)
+        for result_imgs in video_action_recognition(video_path, visualize=True):
+            for i, img in enumerate(result_imgs):
+                _, frame_buffer = cv2.imencode('.jpg', img)
+                frame_buffer= base64.b64encode(frame_buffer)
+                emit('stream_data', {'stream_frame': frame_buffer})
+                time.sleep(0.1)

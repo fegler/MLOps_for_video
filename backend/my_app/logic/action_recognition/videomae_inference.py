@@ -43,6 +43,7 @@ def video_action_recognition(video_path, visualize=True, clip_duration=2):
             visualize_frames = frames.copy()
             print(len(visualize_frames))
             clip_inputs, boxes = preprocess(frames)
+            frames = []
             for idx, box in enumerate(boxes):
                 ## each person action recognition 
                 response = request_to_trt(clip_inputs[idx])
