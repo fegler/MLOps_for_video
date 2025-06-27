@@ -1,0 +1,39 @@
+name: "ensemble"
+platform: "ensemble"
+input [
+    { 
+        name: "raw_video", 
+        data_type: TYPE_STRING, 
+        dims: [-1] 
+    }
+]
+output [
+    { 
+        name: "label", 
+        data_type: TYPE_STRING, 
+        dims: [1] 
+    }
+]
+
+ensemble_scheduling {
+  step [
+    {
+      model_name: "preprocessing"
+      model_version: -1
+      input_map: { key: "raw_video" value: "raw_video" }
+      output_map: { key: "pixel_values" value: "pixel_values" }
+    },
+    {
+      model_name: "videomae"
+      model_version: -1
+      input_map: { key: "pixel_values" value: "pixel_values" }
+      output_map: { key: "logits" value: "logits" }
+    },
+    {
+      model_name: "postprocessing"
+      model_version: -1
+      input_map: { key: "logits" value: "logits" }
+      output_map: { key: "label" value: "label" }
+    }
+  ]
+}

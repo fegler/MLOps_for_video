@@ -6,3 +6,5 @@ frontend/node_modules
 .env.development
 .env.production
 exp
+*.onnx
+*.png

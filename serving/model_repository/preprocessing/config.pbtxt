@@ -1,0 +1,19 @@
+name: "preprocessing"
+backend: "python"
+input [
+    { 
+        name: "raw_video",
+        data_type: TYPE_STRING,
+        dims: [-1] 
+    }
+]
+
+output [
+    { 
+        name: "pixel_values",
+        data_type: TYPE_FP32, 
+        dims: [1, 16, 3, 224, 224] 
+    }
+]
+
+instance_group [{ kind: KIND_CPU }]
